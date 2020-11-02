@@ -1,18 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorTriggerArea : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private GameObject _door;
+
+    private void Start()
     {
-        
+        _door = transform.parent.GetChild(2).gameObject;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if(other.gameObject.CompareTag("Player"))
+            print("enter");
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+            print("exit");
     }
 }
