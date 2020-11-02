@@ -11,40 +11,60 @@ public class DoorController : MonoBehaviour
     public float lerpSpeed = 0.05f;
 
     private Vector3 _restingPos, _openedPos;
+    private IEnumerator _openDoorCo, _closeDoorCo;
 
     private void Start()
     {
-        var localPosition = transform.localPosition;
-        _restingPos = new Vector3(localPosition.x, restingHeight, localPosition.z);
-        _openedPos = new Vector3(localPosition.x, openedHeight, localPosition.z);
+        var position = transform.position;
+        _restingPos = new Vector3(position.x, restingHeight, position.z);
+        _openedPos = new Vector3(position.x, openedHeight, position.z);
+
+        _openDoorCo = OpenDoor();
+        _closeDoorCo = CloseDoor();
+    }
+    
+    private void OnEnable()
+    {
+        DoorEvents.current.doorTriggerEnter += OnDoorTriggerEnter;
+        DoorEvents.current.doorTriggerExit += OnDoorTriggerExit;
     }
 
-    public void OpenDoor()
+    private void OnDisable()
     {
-        StopAllCoroutines();
-        StartCoroutine(DoOpenDoor());
+        DoorEvents.current.doorTriggerEnter -= OnDoorTriggerEnter;
+        DoorEvents.current.doorTriggerExit -= OnDoorTriggerExit;
     }
 
-    public void CloseDoor()
+    private void OnDoorTriggerEnter()
     {
-        StopAllCoroutines();
-        StartCoroutine(DoCloseDoor());
+        StopCoroutine(_closeDoorCo);
+        StartCoroutine(_openDoorCo);
     }
 
-    private IEnumerator DoOpenDoor()
+    private void OnDoorTriggerExit()
     {
-        for (float f = transform.localPosition.y; f <= openedHeight; f += lerpSpeed)
+        StopCoroutine(_openDoorCo);
+        StartCoroutine(_closeDoorCo);
+    }
+
+    private IEnumerator OpenDoor()
+    {
+        print("Door entry called");
+        while(transform.position.y <= openedHeight)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, _openedPos, lerpSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, _openedPos, lerpSpeed);
+            print("opening");
             yield return new WaitForSeconds(0.05f);
         }
     }
     
-    private IEnumerator DoCloseDoor()
+    private IEnumerator CloseDoor()
     {
-        for (float f = transform.localPosition.y; f >= restingHeight; f += lerpSpeed)
+        print("Door exit called");
+        while(transform.position.y >= restingHeight)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, _openedPos, lerpSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, _restingPos, lerpSpeed);
+            print("closing");
             yield return new WaitForSeconds(0.05f);
         }
     }

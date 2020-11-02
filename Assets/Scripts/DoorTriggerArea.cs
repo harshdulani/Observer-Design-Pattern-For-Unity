@@ -15,12 +15,12 @@ public class DoorTriggerArea : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
-            print("enter");
+            DoorEvents.current.InvokeDoorTriggerEnter();
     }
 
     private void OnTriggerExit(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
-            print("exit");
+            DoorEvents.current.InvokeDoorTriggerExit();
     }
 }
