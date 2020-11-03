@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class DoorController : MonoBehaviour
 {
     public int id;
+    public bool isLocked = false;
     
     private float restingHeight = 1.5f;
     private float openedHeight = 4f;
@@ -29,16 +31,21 @@ public class DoorController : MonoBehaviour
     {
         DoorEvents.current.doorTriggerEnter += OnDoorTriggerEnter;
         DoorEvents.current.doorTriggerExit += OnDoorTriggerExit;
+
+        PickupEvents.current.keyPickedUp += OnPickupKey;
     }
 
     private void OnDisable()
     {
         DoorEvents.current.doorTriggerEnter -= OnDoorTriggerEnter;
         DoorEvents.current.doorTriggerExit -= OnDoorTriggerExit;
+        
+        PickupEvents.current.keyPickedUp -= OnPickupKey;
     }
 
-    private void OnDoorTriggerEnter(int doorID)
+    private void OnDoorTriggerEnter(int doorID, bool isLocked = false)
     {
+        if (isLocked) return;
         if (doorID == id)
         {
             StopCoroutine(_closeDoorCo);
@@ -46,13 +53,20 @@ public class DoorController : MonoBehaviour
         }
     }
 
-    private void OnDoorTriggerExit(int doorID)
+    private void OnDoorTriggerExit(int doorID, bool isLocked = false)
     {
+        if (isLocked) return;
         if (doorID == id)
         {
             StopCoroutine(_openDoorCo);
             StartCoroutine(_closeDoorCo);
         }
+    }
+
+    private void OnPickupKey()
+    {
+        if (isLocked)
+            isLocked = false;
     }
 
     private IEnumerator OpenDoor()

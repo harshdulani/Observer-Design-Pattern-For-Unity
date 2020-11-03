@@ -5,22 +5,22 @@ using UnityEngine;
 
 public class DoorTriggerArea : MonoBehaviour
 {
-    private int _doorID;
+    private DoorController _doorController;
 
     private void Start()
     {
-        _doorID = transform.parent.GetChild(2).GetComponent<DoorController>().id;
+        _doorController = transform.parent.GetChild(2).GetComponent<DoorController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
-            DoorEvents.current.InvokeDoorTriggerEnter(_doorID);
+            DoorEvents.current.InvokeDoorTriggerEnter(_doorController.id, _doorController.isLocked);
     }
 
     private void OnTriggerExit(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
-            DoorEvents.current.InvokeDoorTriggerExit(_doorID);
+            DoorEvents.current.InvokeDoorTriggerExit(_doorController.id, _doorController.isLocked);
     }
 }

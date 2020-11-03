@@ -1,12 +1,11 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class DoorEvents : MonoBehaviour
 {
     public static DoorEvents current;
     
-    public Action<int> doorTriggerEnter, doorTriggerExit;
+    public Action<int, bool> doorTriggerEnter, doorTriggerExit;
     
     private void Awake()
     {
@@ -16,15 +15,15 @@ public class DoorEvents : MonoBehaviour
             Destroy(this);
     }//make this a singleton
 
-    public void InvokeDoorTriggerEnter(int id)
+    public void InvokeDoorTriggerEnter(int id, bool isLocked = false)
     {
         //? means only invoke if not null
-        doorTriggerEnter?.Invoke(id);
+        doorTriggerEnter?.Invoke(id, isLocked);
     }
     
-    public void InvokeDoorTriggerExit(int id)
+    public void InvokeDoorTriggerExit(int id, bool isLocked = false)
     {
         //? means only invoke if not null
-        doorTriggerExit?.Invoke(id);
+        doorTriggerExit?.Invoke(id, isLocked);
     }
 }
