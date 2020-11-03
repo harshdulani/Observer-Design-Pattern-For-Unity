@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Unwalkable
+  - Pickup
   layers:
   - Default
   - TransparentFX

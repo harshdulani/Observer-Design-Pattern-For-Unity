@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class DoorController : MonoBehaviour
 {
-    public float restingHeight = 1.5f;
-    public float openedHeight = 4f;
+    public int id;
+    
+    private float restingHeight = 1.5f;
+    private float openedHeight = 4f;
     
     public float lerpSpeed = 0.05f;
 
@@ -35,36 +37,38 @@ public class DoorController : MonoBehaviour
         DoorEvents.current.doorTriggerExit -= OnDoorTriggerExit;
     }
 
-    private void OnDoorTriggerEnter()
+    private void OnDoorTriggerEnter(int doorID)
     {
-        StopCoroutine(_closeDoorCo);
-        StartCoroutine(_openDoorCo);
+        if (doorID == id)
+        {
+            StopCoroutine(_closeDoorCo);
+            StartCoroutine(_openDoorCo);
+        }
     }
 
-    private void OnDoorTriggerExit()
+    private void OnDoorTriggerExit(int doorID)
     {
-        StopCoroutine(_openDoorCo);
-        StartCoroutine(_closeDoorCo);
+        if (doorID == id)
+        {
+            StopCoroutine(_openDoorCo);
+            StartCoroutine(_closeDoorCo);
+        }
     }
 
     private IEnumerator OpenDoor()
     {
-        print("Door entry called");
         while(transform.position.y <= openedHeight)
         {
             transform.position = Vector3.MoveTowards(transform.position, _openedPos, lerpSpeed);
-            print("opening");
             yield return new WaitForSeconds(0.05f);
         }
     }
     
     private IEnumerator CloseDoor()
     {
-        print("Door exit called");
         while(transform.position.y >= restingHeight)
         {
             transform.position = Vector3.MoveTowards(transform.position, _restingPos, lerpSpeed);
-            print("closing");
             yield return new WaitForSeconds(0.05f);
         }
     }
